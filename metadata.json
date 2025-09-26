@@ -1,0 +1,5 @@
+{
+  "name": "AI Audio File Transcription",
+  "description": "Transcribe audio files in over 100 languages using the power of AI. Simply upload your audio, select the language, and get a quick and accurate transcription.",
+  "requestFramePermissions": []
+}
