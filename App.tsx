@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Header from './components/Header';
 import FileUpload from './components/FileUpload';
 import LanguageSelector from './components/LanguageSelector';
@@ -16,10 +16,24 @@ const Spinner: React.FC = () => (
 
 const App: React.FC = () => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>('en-US');
   const [transcription, setTranscription] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (audioFile) {
+      const newUrl = URL.createObjectURL(audioFile);
+      setAudioUrl(newUrl);
+
+      return () => {
+        URL.revokeObjectURL(newUrl);
+      };
+    } else {
+      setAudioUrl(null);
+    }
+  }, [audioFile]);
   
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -60,6 +74,12 @@ const App: React.FC = () => {
     }
   }, [audioFile, language]);
 
+  const handleFileChange = (file: File | null) => {
+    setAudioFile(file);
+    setTranscription('');
+    setError(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans">
       <Header />
@@ -77,7 +97,12 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1 space-y-2">
                     <h3 className="font-semibold text-lg flex items-center"><span className="text-xs w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center mr-2">1</span> Upload Audio File</h3>
-                    <FileUpload onFileChange={setAudioFile} selectedFile={audioFile} disabled={isLoading} />
+                    <FileUpload 
+                        onFileChange={handleFileChange} 
+                        selectedFile={audioFile} 
+                        disabled={isLoading}
+                        audioUrl={audioUrl}
+                    />
                 </div>
                 <div className="flex-1 space-y-2">
                     <h3 className="font-semibold text-lg flex items-center"><span className="text-xs w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center mr-2">2</span> Select Language</h3>

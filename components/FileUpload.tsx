@@ -18,9 +18,10 @@ interface FileUploadProps {
   onFileChange: (file: File | null) => void;
   selectedFile: File | null;
   disabled: boolean;
+  audioUrl: string | null;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFileChange, selectedFile, disabled }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ onFileChange, selectedFile, disabled, audioUrl }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,20 +70,27 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileChange, selectedFile, dis
         />
       </label>
       {selectedFile && (
-        <div className="mt-4 p-3 bg-gray-700/50 rounded-lg flex items-center justify-between">
-          <div className="flex items-center">
-            <AudioFileIcon />
-            <span className="text-sm text-gray-300">{selectedFile.name}</span>
-          </div>
-          <button 
-            onClick={() => onFileChange(null)} 
-            className="text-gray-400 hover:text-white"
-            disabled={disabled}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div className="mt-4 p-3 bg-gray-700/50 rounded-lg flex flex-col space-y-3">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center min-w-0">
+                    <AudioFileIcon />
+                    <span className="text-sm text-gray-300 truncate ml-2">{selectedFile.name}</span>
+                </div>
+                <button 
+                    onClick={() => onFileChange(null)} 
+                    className="text-gray-400 hover:text-white flex-shrink-0 ml-2"
+                    disabled={disabled}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            {audioUrl && (
+                <div>
+                    <audio src={audioUrl} controls className="w-full h-10" />
+                </div>
+            )}
         </div>
       )}
     </div>
